@@ -1,14 +1,15 @@
 import ProjectExceptions.ToFewPointsToFindConvexHullException;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Created by drapek on 29.10.15.
  */
 public class GrahamScan {
     private ArrayList <Point2D> pointsCollection;
+    private Stack<Point2D> convexHull;
+    private Point2D minimalYPoint;
 
     /**
          @param inputArr must have at less 3 Points2D object
@@ -28,9 +29,14 @@ public class GrahamScan {
      * //TODO add proper exception
      * @throws someException if something goes wrong
      */
-    public Point2D [] findPolygon() {
+    public Point2D [] findHull() {
 
-        Point2D minimalYPoint = pullOutMinimalYXpoint();
+        minimalYPoint = pullOutMinimalYXpoint();
+        convexHull.push(minimalYPoint);
+
+        sortPointsByPolarAngle(pointsCollection);
+
+
 
         //TODO return array of polygon tops
         return null;
@@ -65,9 +71,23 @@ public class GrahamScan {
      *  Sort pointsCollection by polar angle in counterclockwise order with respect to inReferenceTo parameter.
      * @param inReferenceTo is point whereby the rest willby sorted
      */
-    private void sortPointsByPolarAngle(Point2D inReferenceTo) {
-        //TODO add algoritm here, and may make seperate metod to calculate the angles.
+    private void sortPointsByPolarAngle(ArrayList <Point2D> listToSort) {
+
+        ArrayList <PointSlopeFactor> listToSortBySlopeFactor = new ArrayList <>();
+        for( Point2D each : listToSort) {
+            listToSortBySlopeFactor.add(new PointSlopeFactor(each, minimalYPoint));
+        }
+
+        Collections.sort(listToSortBySlopeFactor);
+
+        listToSort.clear();
+        for( PointSlopeFactor each : listToSortBySlopeFactor)
+            pointsCollection.add(each.getPoint());
+
+
     }
+
+
 
     private void printPointCollection() {
         System.out.println("Aktualny zestaw punktów w GrahmScan: ");
