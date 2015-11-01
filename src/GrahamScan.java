@@ -8,7 +8,7 @@ import java.util.*;
  */
 public class GrahamScan {
     private ArrayList <Point2D> pointsCollection;
-    private Stack<Point2D> convexHull;
+    private ArrayList <Point2D> convexHull;
     private Point2D minimalYPoint;
 
     /**
@@ -26,20 +26,37 @@ public class GrahamScan {
 
     /**
      * @return tops points of found polygon
-     * //TODO add proper exception
-     * @throws someException if something goes wrong
      */
-    public Point2D [] findHull() {
+    public ArrayList <Point2D> findHull() {
 
         minimalYPoint = pullOutMinimalYXpoint();
-        convexHull.push(minimalYPoint);
-
         sortPointsByPolarAngle(pointsCollection);
+        convexHull = new ArrayList<>();
+        grahamScanAlgorithm();
 
+        return convexHull;
+    }
 
+    private void grahamScanAlgorithm() {
+        convexHull.add(minimalYPoint);
+        convexHull.add(pointsCollection.get(0));
+        convexHull.add(pointsCollection.get(1));
 
-        //TODO return array of polygon tops
-        return null;
+        for( int i = 2; i < pointsCollection.size(); i++) {
+            while( calculateDetBySarrusMethod(convexHull.get(convexHull.size() - 2),
+                                              convexHull.get(convexHull.size() - 1),
+                                              pointsCollection.get(i))
+                    < 0){
+                //so if the third element is at the right side of vector [first, second]
+                convexHull.remove(convexHull.size() - 1);
+            }
+            convexHull.add(pointsCollection.get(i));
+        }
+    }
+
+    private double calculateDetBySarrusMethod(Point2D a, Point2D b, Point2D c) {
+        return a.getX() * b.getY() + a.getY() * c.getX() + b.getX() * c.getY()
+                - b.getY() * c.getX() - a.getX() * c.getY() - a.getY() * b.getX();
     }
 
     /**
@@ -69,7 +86,6 @@ public class GrahamScan {
 
     /**
      *  Sort pointsCollection by polar angle in counterclockwise order with respect to inReferenceTo parameter.
-     * @param inReferenceTo is point whereby the rest willby sorted
      */
     private void sortPointsByPolarAngle(ArrayList <Point2D> listToSort) {
 
@@ -80,7 +96,7 @@ public class GrahamScan {
 
         Collections.sort(listToSortBySlopeFactor);
 
-        listToSort.clear();
+        pointsCollection.clear();
         for( PointSlopeFactor each : listToSortBySlopeFactor)
             pointsCollection.add(each.getPoint());
 
@@ -113,10 +129,40 @@ public class GrahamScan {
             System.out.println("Minimalny pkt: (" + minimalY.getX() + ", " + minimalY.getY() + ")");
             testGrahamScan.printPointCollection();
 
+
         } catch (ToFewPointsToFindConvexHullException ex) {
             System.out.println("W podanej przez ciebie tablicy jest mniej niż 3 punkty, przez co nie można znaleźć otoczki wypukłej!");
             ex.printStackTrace();
         }
+
+        Point2D [] testPoints2 = new Point2D[7];
+        testPoints2[0] = new Point2D.Double(5, 7);
+        testPoints2[1] = new Point2D.Double(0, 5);
+        testPoints2[2] = new Point2D.Double(3, 8);
+        testPoints2[3] = new Point2D.Double(9, 10);
+        testPoints2[4] = new Point2D.Double(7, 5);
+        testPoints2[5] = new Point2D.Double(10, 2);
+        testPoints2[6] = new Point2D.Double(1, 1);
+
+        try {
+            System.out.println();
+            System.out.println();
+            GrahamScan testGrahamScan = new GrahamScan(testPoints2);
+            testGrahamScan.printPointCollection();
+
+            System.out.println("#####Znalezione pkt otoczki to: ##########");
+            ArrayList <Point2D> findedElements = testGrahamScan.findHull();
+            for( Point2D each : findedElements) {
+                System.out.println("    (" + each.getX() + ", " + each.getY() + ")");
+            }
+
+
+        } catch (ToFewPointsToFindConvexHullException ex) {
+            System.out.println("W podanej przez ciebie tablicy jest mniej niż 3 punkty, przez co nie można znaleźć otoczki wypukłej!");
+            ex.printStackTrace();
+        }
+
+
 
 
 
