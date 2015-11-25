@@ -56,6 +56,7 @@ public class CalculateAreaMonteCarlo {
         return false;
     }
 
+
     private Point2D randomPoint() {
         double randX = rnd.nextDouble()*(maxPointOuterRectangle.getX() - minPointOuterRectangle.getX()) + minPointOuterRectangle.getX();
         double randY = rnd.nextDouble()*(maxPointOuterRectangle.getY() - minPointOuterRectangle.getY()) + minPointOuterRectangle.getY();
@@ -92,18 +93,22 @@ public class CalculateAreaMonteCarlo {
 
     public static void main(String [] args) {
         ArrayList <Point2D> testsPoints = new ArrayList<>();
-        testsPoints.add(new Point2D.Double(1, 1));
-        testsPoints.add(new Point2D.Double(10, 2));
-        testsPoints.add(new Point2D.Double(9, 10));
-        testsPoints.add(new Point2D.Double(3, 8));
-        testsPoints.add(new Point2D.Double(0, 5));
+        testsPoints.add(new Point2D.Double(2, 2));
+        testsPoints.add(new Point2D.Double(8, 3));
+        testsPoints.add(new Point2D.Double(9, 7));
+        testsPoints.add(new Point2D.Double(6, 11));
+        testsPoints.add(new Point2D.Double(3, 9));
+        testsPoints.add(new Point2D.Double(1, 6));
 
         try {
             CalculateAreaMonteCarlo testCalculateArea = new CalculateAreaMonteCarlo(testsPoints);
 
             System.out.println("##########Test isInsideFigure#########");
-            System.out.println("(7, 5) jest w figurze: " + testCalculateArea.isInsideFigure(new Point2D.Double(7, 5)));
-            System.out.println("(10, 11) jest w figurze: " + testCalculateArea.isInsideFigure(new Point2D.Double(10, 11)));
+
+            System.out.println("(5, 4) jest w figurze: " + StaticPointChecker.isInsideConvexHull(testsPoints, new Point2D.Double(5, 4))); //powinno dać true
+            System.out.println("(9, 2,5) jest w figurze: " + StaticPointChecker.isInsideConvexHull(testsPoints, new Point2D.Double(9, 2.5))); //powinno dać false
+            System.out.println("(1, 3) jest w figurze: " + StaticPointChecker.isInsideConvexHull(testsPoints, new Point2D.Double(1, 3))); //powinno dać false
+            System.out.println("(2, 10) jest w figurze: " + StaticPointChecker.isInsideConvexHull(testsPoints, new Point2D.Double(2, 10))); //powinno dać false
 
             System.out.println("##########Test liczenia pola powierzchni#########");
             System.out.println("Pole podanje figury to: " + testCalculateArea.calculateArea());
