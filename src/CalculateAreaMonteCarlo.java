@@ -8,14 +8,14 @@ import java.util.Random;
  * Created by drapek on 01.11.15.
  */
 public class CalculateAreaMonteCarlo {
-    ArrayList <Point2D> fieldBoundaryPoints;
+    private ArrayList <Point2D> fieldBoundaryPoints;
 
-    Point2D minPointOuterRectangle;
-    Point2D maxPointOuterRectangle;
-    Random rnd = new Random();
+    private Point2D minPointOuterRectangle;
+    private Point2D maxPointOuterRectangle;
+    private Random rnd = new Random();
 
-    int randomSamplesNumber = 200;
-    int hitsNumber;
+    private int randomSamplesNumber = 200;
+    private int hitsNumber;
 
 
     public CalculateAreaMonteCarlo(ArrayList <Point2D> fieldBoundaryPoints) throws ToFewPointsToMakePlygon {
@@ -38,7 +38,7 @@ public class CalculateAreaMonteCarlo {
         hitsNumber = 0;
 
         for(int i = 0; i < randomSamplesNumber; i++) {
-            if(isInsideFigure(randomPoint()))
+            if(StaticPointChecker.isInsideConvexHull(fieldBoundaryPoints, randomPoint()) )
                 hitsNumber++;
         }
 
@@ -46,15 +46,6 @@ public class CalculateAreaMonteCarlo {
         return (double) hitsNumber / (double) randomSamplesNumber * outerRectangleArea;
     }
 
-    private boolean isInsideFigure(Point2D check) {
-        for (int i = 0, j = fieldBoundaryPoints.size() - 1; i < fieldBoundaryPoints.size(); j = i++) {
-            if ((fieldBoundaryPoints.get(i).getY() > check.getY()) != (fieldBoundaryPoints.get(j).getY() > check.getY()) &&
-                    (check.getX() < (fieldBoundaryPoints.get(j).getX() - fieldBoundaryPoints.get(i).getX()) * (check.getY() - fieldBoundaryPoints.get(i).getY()) / (fieldBoundaryPoints.get(j).getY() - fieldBoundaryPoints.get(i).getY()) + fieldBoundaryPoints.get(i).getX())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 
     private Point2D randomPoint() {

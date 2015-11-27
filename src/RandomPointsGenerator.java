@@ -9,7 +9,7 @@ import java.util.Random;
 public class RandomPointsGenerator {
 
     double minX, minY, maxX, maxY;
-    public Point2D [] randomizedPoints;
+    private Point2D [] randomizedPoints;
 
     public RandomPointsGenerator(double minX, double minY, double maxX, double maxY, int howManyGenerate) {
         this.minX = minX;
